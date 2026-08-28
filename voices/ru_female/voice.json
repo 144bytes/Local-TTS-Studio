@@ -1,0 +1,12 @@
+{
+  "id": "ru_female",
+  "label": "Русский — Женский",
+  "gender": "female",
+  "languages": [
+    "ru"
+  ],
+  "reference": "reference.wav",
+  "reference_text": "Это образец записи для озвучивания. Голос должен звучать спокойно, чётко и естественно, с ровным темпом. Хорошая озвучка не отвлекает слушателя от смысла.",
+  "engines": [],
+  "_source": "Windows SAPI 'Microsoft Irina Desktop' (pitch x1.0)"
+}

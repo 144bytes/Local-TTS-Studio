@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LocalTTS Studio</title>
+  <link rel="stylesheet" href="/static/studio.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">LocalTTS<span>Studio</span></div>
+    <div class="status">
+      <span class="pill" id="pillOffline">офлайн</span>
+      <span class="pill soft" id="pillEngine">Qwen3-TTS</span>
+      <span class="hw" id="hw"></span>
+    </div>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <main class="grid">
+
+    <!-- ============ СЦЕНАРИЙ ============ -->
+    <section class="card script-card">
+      <div class="card-head">
+        <h2>Сценарий</h2>
+        <span class="metrics" id="metrics">0 слов · ~0:00</span>
+      </div>
+
+      <div class="editor">
+        <textarea id="script" spellcheck="true" placeholder="Вставьте текст для озвучивания.
+
+Интонацию задаёт пресет справа — команды в тексте не нужны.
+Пустая строка = пауза между абзацами.
+Ударение можно поставить плюсом перед гласной: проц+ессор."></textarea>
+      </div>
+
+      <div class="script-bar">
+        <button id="analyzeBtn" class="btn ghost">Проверить текст</button>
+        <button id="undoBtn" class="btn ghost icon" title="Отменить (Ctrl+Z)">↶</button>
+        <button id="redoBtn" class="btn ghost icon" title="Вернуть (Ctrl+Y)">↷</button>
+        <span class="grow"></span>
+        <button id="generateBtn" class="btn primary big">Озвучить</button>
+      </div>
+
+      <div id="analysisBox" class="subcard hidden">
+        <div class="subcard-head">
+          <strong>Анализ текста</strong>
+          <button id="applyFixes" class="btn tiny">Применить автоисправления</button>
+          <button id="closeAnalysis" class="btn tiny ghost">×</button>
+        </div>
+        <div id="analysisList" class="issues"></div>
+      </div>
+
+      <div id="resultBox" class="subcard hidden">
+        <div class="subcard-head">
+          <strong>Результаты</strong>
+          <span id="resultMeta" class="dim"></span>
+          <span id="genProgress" class="dim"></span>
+        </div>
+        <div id="variants"></div>
+        <div id="resultWarn" class="warn"></div>
+      </div>
+    </section>
+
+    <!-- ============ НАСТРОЙКИ ============ -->
+    <aside class="card settings-card">
+      <div class="field">
+        <label>Голос</label>
+        <div class="row">
+          <select id="voice"></select>
+          <button id="addVoiceBtn" class="icon-btn" title="Добавить / управлять голосами">＋</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Пресет <span class="preset-hint" id="presetHint"></span></label>
+        <select id="preset"></select>
+      </div>
+
+      <div class="field">
+        <label>Скорость <span class="val" id="speedVal">1.00×</span></label>
+        <input type="range" id="speed" min="0.7" max="1.3" step="0.02" value="1.0">
+      </div>
+
+      <details class="field adv">
+        <summary>Ещё</summary>
+        <label>Количество вариантов <span class="val" id="variantsVal">1</span></label>
+        <input type="range" id="nvariants" min="1" max="5" step="1" value="1">
+        <div class="dim sm" style="margin:2px 0 8px">Несколько независимых генераций одного текста — выберете лучшую.</div>
+        <label>Битрейт MP3</label>
+        <select id="bitrate"></select>
+        <label class="check"><input type="checkbox" id="post" checked> Мастеринг (нормализация громкости + лимитер)</label>
+      </details>
+
+      <div class="history">
+        <div class="history-head"><strong>История</strong><span id="histCount" class="dim"></span></div>
+        <div id="historyList"></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <footer id="foot" class="dim"></footer>
+</div>
+
+<!-- ============ МОДАЛКА ГОЛОСОВ ============ -->
+<dialog id="voicesModal" class="modal">
+  <div class="modal-head">
+    <h3>Голоса</h3>
+    <form method="dialog"><button class="x" aria-label="Закрыть">×</button></form>
+  </div>
+
+  <div id="voiceRows" class="voice-rows"></div>
+
+  <h4>Добавить голос</h4>
+  <p class="dim sm">Загрузите <b>один клип или несколько коротких</b> — MP3, WAV, M4A, FLAC, OGG, Opus
+     (конвертация автоматическая). Несколько клипов склеиваются в порядке выбора, обрезаются,
+     приводятся к моно / 24&nbsp;кГц и нормализуются, максимум ~45&nbsp;с. Оптимально 15–45&nbsp;с
+     чистой речи одного человека. <b>Расшифровка обязательна</b> — впишите ровно то, что произносится.</p>
+
+  <form id="voiceForm" class="vform">
+    <label>Аудиофайл(ы)
+      <input type="file" id="vFile" accept="audio/*,.wav,.mp3,.m4a,.flac,.ogg,.oga,.opus,.aac,.wma,.mp4" multiple required>
+    </label>
+    <div id="vFileList" class="vfiles"></div>
+    <div class="vgrid">
+      <label>ID<input type="text" id="vId" placeholder="moy_golos"></label>
+      <label>Название<input type="text" id="vLabel" placeholder="Мой голос"></label>
+      <label>Пол
+        <select id="vGender"><option value="female">женский</option><option value="male">мужской</option><option value="unknown">—</option></select>
+      </label>
+      <label>Язык(и)<input type="text" id="vLangs" value="ru" placeholder="ru"></label>
+    </div>
+    <label>Расшифровка (что произносится в записи)
+      <textarea id="vText" rows="3" placeholder="Сегодня хороший день. Мы записываем образец голоса для озвучивания."></textarea>
+    </label>
+    <div class="vform-actions">
+      <button type="submit" id="vSubmit" class="btn primary sm">Добавить голос</button>
+      <span id="vStatus" class="dim sm"></span>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============ МОДАЛКА РЕДАКТИРОВАНИЯ ГОЛОСА ============ -->
+<dialog id="editVoiceModal" class="modal small">
+  <div class="modal-head">
+    <h3>Изменить голос</h3>
+    <form method="dialog"><button class="x">×</button></form>
+  </div>
+  <form id="editForm" class="vform">
+    <input type="hidden" id="eId">
+    <label>Название<input type="text" id="eLabel"></label>
+    <label>Пол
+      <select id="eGender"><option value="female">женский</option><option value="male">мужской</option><option value="unknown">—</option></select>
+    </label>
+    <label>Язык(и)<input type="text" id="eLangs" placeholder="ru"></label>
+    <label>Расшифровка (transcript)
+      <textarea id="eText" rows="4" placeholder="Точный текст записи — нужен для генерации"></textarea>
+    </label>
+    <div class="vform-actions">
+      <button type="submit" class="btn primary sm">Сохранить</button>
+      <span id="eStatus" class="dim sm"></span>
+    </div>
+  </form>
+</dialog>
+
+<script src="/static/editor.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

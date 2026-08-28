@@ -1,0 +1,113 @@
+{
+  "server": { "host": "127.0.0.1", "port": 8765, "open_browser": true },
+
+  "offline_mode": true,
+  "engine": "qwen",
+  "device": "auto",
+
+  "language": "ru",
+  "default_voice": "ru_female",
+  "default_preset": "обычный",
+
+  "estimate": { "words_per_minute": 130 },
+
+  "chunking": { "max_chars": 320, "hard_max_chars": 600 },
+
+  "pauses": {
+    "sentence_gap_ms": 90,
+    "comma_gap_ms": 0,
+    "paragraph_gap_ms": 550,
+    "min_ms": 0,
+    "max_ms": 4000
+  },
+
+  "generation": { "temperature": 0.85, "top_p": 1.0, "repetition_penalty": 1.05 },
+
+  "presets": {
+    "обычный": {
+      "label": "Обычный", "order": 1, "hint": "живая разговорная подача",
+      "temperature": 0.85, "top_p": 1.0, "repetition_penalty": 1.05,
+      "speed": 1.0, "pitch_semitones": 0.0, "gain_db": 0.0, "pause_scale": 1.0,
+      "eq": {}, "text_style": "neutral"
+    },
+    "нормальный": {
+      "label": "Нормальный", "order": 2, "hint": "ровный, максимально стабильный",
+      "temperature": 0.68, "top_p": 0.95, "repetition_penalty": 1.10,
+      "speed": 1.0, "pitch_semitones": 0.0, "gain_db": 0.0, "pause_scale": 0.9,
+      "eq": {}, "text_style": "neutral"
+    },
+    "радостный": {
+      "label": "Радостный", "order": 3, "hint": "энергично, с улыбкой",
+      "temperature": 0.98, "top_p": 1.0, "repetition_penalty": 1.03,
+      "speed": 1.05, "pitch_semitones": 1.0, "gain_db": 0.5, "pause_scale": 0.85,
+      "eq": { "presence_db": 1.5 }, "text_style": "bright"
+    },
+    "грустный": {
+      "label": "Грустный", "order": 4, "hint": "медленно, приглушённо",
+      "temperature": 0.74, "top_p": 0.95, "repetition_penalty": 1.08,
+      "speed": 0.9, "pitch_semitones": -1.0, "gain_db": -1.0, "pause_scale": 1.5,
+      "eq": { "low_shelf_db": 1.0, "presence_db": -1.5 }, "text_style": "soft"
+    },
+    "шёпот": {
+      "label": "Шёпот", "order": 5, "hint": "тихо, доверительно",
+      "temperature": 0.7, "top_p": 0.92, "repetition_penalty": 1.1,
+      "speed": 0.97, "pitch_semitones": 0.0, "gain_db": -9.0, "pause_scale": 1.2,
+      "eq": { "high_pass_hz": 90, "presence_db": 2.0 }, "text_style": "soft"
+    },
+    "злой": {
+      "label": "Злой", "order": 6, "hint": "резко, с нажимом",
+      "temperature": 0.9, "top_p": 1.0, "repetition_penalty": 1.05,
+      "speed": 1.03, "pitch_semitones": 0.0, "gain_db": 1.5, "pause_scale": 0.75,
+      "eq": { "presence_db": 2.0 }, "compress": true, "text_style": "hard"
+    },
+    "взволнованный": {
+      "label": "Взволнованный", "order": 7, "hint": "быстро, на подъёме",
+      "temperature": 1.02, "top_p": 1.0, "repetition_penalty": 1.02,
+      "speed": 1.09, "pitch_semitones": 1.0, "gain_db": 0.5, "pause_scale": 0.7,
+      "eq": { "presence_db": 1.0 }, "text_style": "bright"
+    },
+    "саркастичный": {
+      "label": "Саркастичный", "order": 8, "hint": "с растяжкой и подтекстом",
+      "temperature": 0.92, "top_p": 1.0, "repetition_penalty": 1.06,
+      "speed": 0.95, "pitch_semitones": 0.0, "gain_db": 0.0, "pause_scale": 1.35,
+      "eq": {}, "text_style": "drawl"
+    },
+    "флирт": {
+      "label": "Флирт", "order": 9, "hint": "мягко, тепло, вкрадчиво",
+      "temperature": 0.85, "top_p": 0.98, "repetition_penalty": 1.06,
+      "speed": 0.92, "pitch_semitones": 0.5, "gain_db": -1.0, "pause_scale": 1.3,
+      "eq": { "low_shelf_db": 1.5, "presence_db": -1.0 }, "text_style": "soft"
+    },
+    "документальный": {
+      "label": "Документальный", "order": 10, "hint": "уверенный голос за кадром",
+      "temperature": 0.75, "top_p": 0.95, "repetition_penalty": 1.08,
+      "speed": 0.97, "pitch_semitones": -0.5, "gain_db": 0.0, "pause_scale": 1.1,
+      "eq": { "low_shelf_db": 1.5, "presence_db": 1.0 }, "compress": true, "text_style": "narration"
+    }
+  },
+
+  "stress": {
+    "marker": "+",
+    "enabled": true,
+    "dictionary": {
+      "комп": "к+омп",
+      "проц": "пр+оц",
+      "смарт": "см+арт"
+    }
+  },
+
+  "audio": {
+    "mp3_bitrate": "160k",
+    "mp3_bitrate_choices": ["96k", "112k", "128k", "160k"],
+    "keep_raw": true,
+    "post": {
+      "enabled": true,
+      "loudness_normalize": true,
+      "target_lufs": -16.0,
+      "true_peak_db": -1.5,
+      "limiter": true,
+      "limiter_ceiling_db": -1.0,
+      "denoise": false
+    }
+  }
+}

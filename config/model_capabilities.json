@@ -1,0 +1,57 @@
+{
+  "_comment": "Engine registry. LocalTTS Studio runs Qwen3-TTS 1.7B only; 'mock' exists for the test suite.",
+
+  "engines": {
+    "qwen": {
+      "label": "Qwen3-TTS 1.7B",
+      "class": "app.tts.qwen_engine:QwenTTSProvider",
+      "sample_rate": 24000,
+      "weights_license": "Apache-2.0",
+      "commercial_ok": true,
+      "features": ["voice_cloning", "languages", "speed_postprocess", "pause_insertion", "temperature"],
+      "not_supported": ["voices_builtin", "native_emotion_tags", "nonverbal_sounds"],
+      "languages": ["ru", "en", "de", "es", "fr", "it", "ja", "ko", "pt", "zh"],
+      "primary_languages": ["ru"],
+      "hardware": {
+        "min_vram_gb_fp16": 8.0,
+        "recommended_vram_gb": 10.0,
+        "cpu_supported": true,
+        "cpu_realtime_factor": 0.1,
+        "gpu_realtime_factor_estimate": 0.5
+      },
+      "model_dir": "qwen-1.7b",
+      "required_files": ["config.json", "model.safetensors", "speech_tokenizer/config.json"],
+      "python_package": "qwen_tts",
+      "notes": "Every voice needs reference_wav + reference_text in voices/<id>/voice.json.",
+      "download": {
+        "source": "huggingface",
+        "repo_id": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+        "revision": "main",
+        "approx_size_gb": 3.9
+      }
+    },
+
+    "mock": {
+      "label": "Mock engine (testing)",
+      "class": "app.tts.mock_engine:MockProvider",
+      "sample_rate": 24000,
+      "weights_license": "n/a",
+      "commercial_ok": true,
+      "features": ["voice_cloning", "languages", "speed_postprocess", "pause_insertion", "temperature"],
+      "not_supported": [],
+      "languages": ["ru", "en"],
+      "primary_languages": ["ru"],
+      "hardware": {"min_vram_gb_fp16": 0.0, "recommended_vram_gb": 0.0, "cpu_supported": true, "cpu_realtime_factor": 50.0, "gpu_realtime_factor_estimate": 50.0},
+      "model_dir": null,
+      "required_files": []
+    }
+  },
+
+  "features": {
+    "voice_cloning":     "Clones a voice from a short reference clip + transcript",
+    "languages":         "Accepts an explicit language id",
+    "temperature":       "Sampling temperature is exposed (presets tune it)",
+    "speed_postprocess": "Rate changes applied as time-stretch after synthesis",
+    "pause_insertion":   "Pauses inserted as digital silence by the pipeline"
+  }
+}

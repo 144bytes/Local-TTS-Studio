@@ -1,0 +1,20 @@
+# LocalTTS Studio — runtime dependencies (Qwen3-TTS 1.7B, Russian narration).
+#
+# PyTorch is installed separately by setup.bat with the right CUDA/CPU build:
+#   pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#   (or .../whl/cpu on a machine without an NVIDIA GPU)
+
+qwen-tts==0.1.1             # the TTS engine (Alibaba Qwen, Apache-2.0)
+transformers==4.57.3        # exact version qwen-tts needs (do NOT bump)
+setuptools<81              # some deps still import pkg_resources
+numpy<2
+
+flask>=3.0,<4              # local web server
+imageio-ffmpeg>=0.5        # bundled static FFmpeg (audio processing + MP3)
+soundfile>=0.12           # WAV I/O
+
+# dev/test
+pytest>=8
+
+# building LocalTTS.exe:  build_exe.bat
+# pyinstaller>=6
